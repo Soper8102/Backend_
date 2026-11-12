@@ -1,21 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
-import { clientesDB } from '../config/database';
-import { Cliente } from '../models/cliente_models';
+import { ClienteModel } from '../models/cliente_models';
 
-// GET: Obtener todos los clientes (el que usará tu tabla de Angular)
 export const getClientes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        res.status(200).json(clientesDB);
+        const clientes = await ClienteModel.getAll();
+        res.status(200).json(clientes);
     } catch (error) {
         next(error);
     }
 };
 
-// GET: Obtener cliente por ID
 export const getClienteById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const id = parseInt(String(req.params.id), 10);
-        const cliente = clientesDB.find(c => c.id === id);
+        const cliente = await ClienteModel.getById(id);
 
         if (!cliente) {
             res.status(404).json({ message: 'Cliente no encontrado' });
@@ -28,19 +26,17 @@ export const getClienteById = async (req: Request, res: Response, next: NextFunc
     }
 };
 
-// POST: Crear un nuevo cliente
 export const createCliente = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const nuevoCliente: Cliente = {
-            id: clientesDB.length + 1,
-            nombre: req.body.nombre,
-            email: req.body.email,
-            telefono: req.body.telefono,
-            direccion: req.body.direccion,
-            estado: req.body.estado || 'activo'
-        };
-
-        clientesDB.push(nuevoCliente);
+        const { nombre, apellido, email, telefono, direccion, estado } = req.body;
+        const nuevoCliente = await ClienteModel.create({
+            nombre,
+            apellido,
+            email,
+            telefono,
+            direccion,
+            estado
+        });
         res.status(201).json(nuevoCliente);
     } catch (error) {
         next(error);

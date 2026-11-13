@@ -24,5 +24,16 @@ export class ClienteModel {
         return result.rows[0];
     }
 
+    static async create(data: Omit<Cliente, 'id'>): Promise<Cliente> {
+        const { nombre, apellido, email, telefono, direccion, estado } = data;
+        const result = await query(
+            `INSERT INTO clientes (nombre, apellido, email, telefono, direccion, estado)
+             VALUES ($1, $2, $3, $4, $5, $6)
+             RETURNING *`,
+            [nombre, apellido, email, telefono, direccion, estado || 'activo']
+        );
+        return result.rows[0];
+    }
+
 
 }

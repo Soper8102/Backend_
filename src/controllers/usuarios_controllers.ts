@@ -37,3 +37,37 @@ export const loginUsuario = async (req: Request, res: Response, next: NextFuncti
         next(error);
     }
 };
+
+/**
+ * POST /api/usuarios/registro
+ * Recibe { usuario, contrasena } en el body.
+ * Inserta el usuario en la BD y responde con 201.
+ */
+export const registrarUsuario = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { usuario, contrasena } = req.body;
+
+        if (!usuario || !contrasena) {
+            res.status(400).json({ message: 'Usuario y contraseña son obligatorios' });
+            return;
+        }
+
+        // Verificar si el usuario ya existe
+        const usuarioExistente = await UsuarioModel.findByUsuario(usuario);
+        if (usuarioExistente) {
+            res.status(409).json({ message: 'El usuario ya se encuentra registrado' });
+            return;
+        }
+
+        // Insertar en la BD
+        const nuevoUsuario = await UsuarioModel.create(usuario, contrasena);
+
+        res.status(201).json({
+            message: 'Registro exitoso',
+            usuario: nuevoUsuario
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};

@@ -71,3 +71,16 @@ export const registrarUsuario = async (req: Request, res: Response, next: NextFu
         next(error);
     }
 };
+
+/**
+ * GET /api/usuarios
+ * Retorna todos los usuarios registrados en la base de datos.
+ */
+export const obtenerUsuarios = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const usuarios = await UsuarioModel.findAll();
+        res.status(200).json(usuarios);
+    } catch (error) {
+        next(error);
+    }
+};

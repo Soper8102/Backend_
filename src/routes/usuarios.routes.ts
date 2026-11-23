@@ -1,9 +1,12 @@
 import { Router } from 'express';
-import { loginUsuario, registrarUsuario } from '../controllers/usuarios_controllers';
+import { loginUsuario, registrarUsuario, obtenerUsuarios } from '../controllers/usuarios_controllers';
 
 const router = Router();
 
 // Endpoints de usuarios:
+// GET /api/usuarios (listar usuarios)
+router.get('/', obtenerUsuarios);
+
 // POST /api/usuarios (login tradicional)
 router.post('/', loginUsuario);
 

@@ -53,5 +53,15 @@ export class UsuarioModel {
         );
         return result.rows[0];
     }
+
+    /**
+     * Obtiene la lista de todos los usuarios registrados (sin contraseñas).
+     */
+    static async findAll(): Promise<Omit<Usuario, 'contrasena'>[]> {
+        const result = await query(
+            'SELECT id_usuario, usuario FROM usuarios ORDER BY id_usuario ASC'
+        );
+        return result.rows;
+    }
 }
 
